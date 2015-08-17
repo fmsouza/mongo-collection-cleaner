@@ -1,0 +1,2 @@
+#!/bin/bash
+docker run -it --rm --link mongo:mongo -v $(pwd):/app --name mongo-cleaner node:0.12.7 /bin/bash

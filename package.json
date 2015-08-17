@@ -1,0 +1,23 @@
+{
+  "name": "mongo-collection-cleaner",
+  "version": "1.0.0",
+  "description": "Cleans mongodb collection",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fmsouza/mongo-collection-cleaner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fmsouza/mongo-collection-cleaner/issues"
+  },
+  "homepage": "https://github.com/fmsouza/mongo-collection-cleaner#readme",
+  "dependencies": {
+    "moment": "^2.10.6",
+    "mongodb": "^2.0.41"
+  }
+}
