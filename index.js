@@ -1,4 +1,5 @@
 var MongoClient = require("mongodb").MongoClient;
+var CronJob = require('cron').CronJob;
 var config = require("./config");
 var moment = require('moment');
 
@@ -14,26 +15,25 @@ MongoClient.connect(mongoUrl, function(error, db){
 		console.log("mongo", error);
 		process.exit(1);
 	} else {
-		var collection = db.collection("bus_history");
-		var now = new Date();
-		var timeLimit = new Date(now.valueOf());
-		timeLimit.setHours(timeLimit.getHours() - ageLimit.days*24 - ageLimit.hours);
-		timeLimit.setMinutes(timeLimit.getMinutes() - ageLimit.minutes);
-		timeLimit.setSeconds(timeLimit.getSeconds() - ageLimit.seconds);
-		
-		//console.log(now.toISOString(), now.getTimezoneOffset());
-		//console.log(timeLimit.toISOString(), timeLimit.getTimezoneOffset());
-		
-		var batch = collection.initializeUnorderedBulkOp();
-		batch.find({ timestamp: { $lt: timeLimit.toISOString() } }).remove();
-		batch.execute(function(error, response){
-			if(error){
-				console.log("mongo remove", error);
-				process.exit(1);
-			} else {
-				console.log("Removed:", response.nRemoved);
-				process.exit();
-			}
-		});
+        new CronJob(config.cronPattern, function() {
+            var collection = db.collection(config.collectionName);
+            var now = new Date();
+            var timeLimit = new Date(now.valueOf());
+            timeLimit.setHours(timeLimit.getHours() - ageLimit.days*24 - ageLimit.hours);
+            timeLimit.setMinutes(timeLimit.getMinutes() - ageLimit.minutes);
+            timeLimit.setSeconds(timeLimit.getSeconds() - ageLimit.seconds);
+            
+            var batch = collection.initializeUnorderedBulkOp();
+            batch.find({ timestamp: { $lt: timeLimit.toISOString() } }).remove();
+            batch.execute(function(error, response){
+                if(error){
+                    console.log("mongo remove", error);
+                    process.exit(1);
+                } else {
+                    console.log("Removed:", response.nRemoved);
+                    process.exit();
+                }
+            });
+        });
 	}
 });
